@@ -1,3 +1,4 @@
+time1 = Time.now
 input = [4,5,3,2,3,3,2,4,2,1,2,4,5,2,2,2,4,1,1,1,5,1,1,2,5,2,1,1,4,4,5,5,1,2,1,
         1,5,3,5,2,4,3,2,4,5,3,2,1,4,1,3,1,2,4,1,1,4,1,4,2,5,1,4,3,5,2,4,5,4,2,2,
         5,1,1,2,4,1,4,4,1,1,3,1,2,3,2,5,5,1,1,5,2,4,2,2,4,1,1,1,4,2,2,3,1,2,4,5,
@@ -31,7 +32,7 @@ input = [4,5,3,2,3,3,2,4,2,1,2,4,5,2,2,2,4,1,1,1,5,1,1,2,5,2,1,1,4,4,5,5,1,2,1,
 # end
 
 # Part 2
-test_input = [3,4,3,1,2]
+# test_input = [3,4,3,1,2]
 fishies = {}
 input.each do |n|
   fishies[n] = 0 if fishies[n] == nil
@@ -44,9 +45,9 @@ def create_fish(hash, fish_day, count)
 end
 
 def day_cycle(hash, day, end_day)
-  new_hash = {} if new_hash == nil
+  new_hash = {} if new_hash.nil?
   hash.clone.each do |key, value|
-    if key == 0
+    if key.zero?
       create_fish(new_hash, 6, value)
       create_fish(new_hash, 8, value)
     else
@@ -55,8 +56,9 @@ def day_cycle(hash, day, end_day)
     end
   end
   day += 1
-  p "After day #{day} there are #{new_hash.values.sum} fishies: #{new_hash}"
+  p "After day #{day} there are #{new_hash.values.sum}"
   day_cycle(new_hash, day, end_day) unless day == end_day
 end
 
-day_cycle(fishies, 0, 256)
+day_cycle(fishies, 0, 8000)
+puts "Time passed: #{(Time.now - time1) * 1000}ms"
