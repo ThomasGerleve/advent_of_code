@@ -104,12 +104,71 @@ test_input = "2199943210
 9856789892
 8767896789
 9899965678"
-input2 = test_input.split("\n")
+array_of_rows = input.split("\n")
 
-sum = 0
-input2.each_with_index do |str, index|
-  num = str.char.to_i
-  i = 0
-  num.each do |int|
-    previous = int[i - 1] if i - 1 > 0
-    following = int[i + 1] if i + 1 < num.length - 1
+# Part 1
+# sum = []
+# array_of_rows.each_with_index do |string_of_numbers, index|
+#   array_of_number_strings = string_of_numbers.chars
+#   array_of_number_strings.each_with_index do |num_str, index_num|
+#     previous = (index_num - 1) >= 0 ? array_of_number_strings[index_num - 1].to_i : 10
+#     following = (index_num + 1) < array_of_number_strings.length ? array_of_number_strings[index_num + 1].to_i : 10
+#     upper_row = (index - 1) >= 0 ? array_of_rows[index - 1][index_num].to_i : 10
+#     lower_row = (index + 1) < array_of_rows.length ? array_of_rows[index + 1][index_num].to_i : 10
+#     int = num_str.to_i
+#     p "#{num_str} previous: #{previous} following: #{following} upper_row: #{upper_row} lower_row: #{lower_row}"
+#     next unless int < previous && int < following && int < upper_row && int < lower_row
+
+#     p "ia: #{index + 1} | #{int}"
+#     sum << int
+#   end
+# end
+# p "Solution: #{sum.sum + sum.length}"
+
+# Part 2
+#  x 0 1 2 3 4 5 6 7 8 9
+# y0 2 1 9 9 9 4 3 2 1 0
+# y1 3 9 8 7 8 9 4 9 2 1
+# y2 9 8 5 6 7 8 9 8 9 2
+# y3 8 7 6 7 8 9 6 7 8 9
+# y4 9 8 9 9 9 6 5 6 7 8
+
+def check_coord(coord, number, grid_hash, checked_coords, basins, i)
+  return p "returning from #{coord}" if checked_coords.key?(coord) || number == 9 || coord == 9
+
+  basins[i] += 1
+  checked_coords[coord] = 'checked'
+  x_value = coord.scan(/(?<=x)\d+/)[0].to_i
+  y_value = coord.scan(/(?<=y)\d+/)[0].to_i
+
+  upper_coord = y_value.zero? ? 9 : "x#{x_value}y#{y_value - 1}"
+  upper_number = y_value.zero? ? 9 : grid_hash[upper_coord]
+  right_coord = x_value == 99 ? 9 : "x#{x_value + 1}y#{y_value}"
+  right_number = x_value == 99 ? 9 : grid_hash[right_coord]
+  lower_coord = y_value == 99 ? 9 : "x#{x_value}y#{y_value + 1}"
+  lower_number = y_value == 99 ? 9 : grid_hash[lower_coord]
+  left_coord = x_value.zero? ? 9 : "x#{x_value - 1}y#{y_value}"
+  left_number = x_value.zero? ? 9 : grid_hash[left_coord]
+  check_coord(upper_coord, upper_number, grid_hash, checked_coords, basins, i)
+  check_coord(right_coord, right_number, grid_hash, checked_coords, basins, i)
+  check_coord(lower_coord, lower_number, grid_hash, checked_coords, basins, i)
+  check_coord(left_coord, left_number, grid_hash, checked_coords, basins, i)
+end
+
+grid_hash = {}
+array_of_rows.each_with_index do |string_of_numbers, index|
+  array_of_number_strings = string_of_numbers.chars
+  array_of_number_strings.each_with_index do |num_str, index_num|
+    grid_hash["x#{index_num}y#{index}"] = num_str.to_i
+  end
+end
+
+checked_coords = {}
+basins = {}
+i = 1
+grid_hash.each do |coord, number|
+  basins[i] = 0
+  check_coord(coord, number, grid_hash, checked_coords, basins, i)
+  i += 1
+end
+p basins.values.max(3).reduce(1, :*)
