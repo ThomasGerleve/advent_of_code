@@ -1,4 +1,4 @@
-input  = "[[<[<{[<{{<[{(()[])[[]()]}[((){})<[]{}>]}<<{[]{}}<(){}>><([]<>)>>>[[[<<>>[<><>]][<<>>(<><>)]][{
+input = "[[<[<{[<{{<[{(()[])[[]()]}[((){})<[]{}>]}<<{[]{}}<(){}>><([]<>)>>>[[[<<>>[<><>]][<<>>(<><>)]][{
 ((<[(<<(<{<((<()<>>{()()}){<<>><()[]>})([{<>{}}(()[])]{(<><>>})>(<((()())<[][]>)>([(<>{})({}())][<
 <<<(<<[[((({<([]<>)[[]]>{<{}>{(){}}}}{[<[][]><<>[]>]({<><>}{()<>})})[<<({}())(()<>)>[([]{})<[]()>]>({[[]
 <(<<<[((([{({((){})<<>{}>}[<(){}>[<>()]])[[<{}[]>({}{}]](<<>[]><[]<>>)]}](<[({[][]}<()<>>)<[
@@ -104,79 +104,35 @@ test_input = "[({(<(())[]>[[{[]{<()<>>
 <{([([[(<>()){}]>(<<{{
 <{([{{}}[<[[[<>{}]]]>[]]"
 
-input_rows = test_input.split("\n")
-input_chars = input_rows.map { |row| row.chars }
+input_arr = input.split("\n")
+input_rows = input_arr.map(&:chars)
 
-# def check_next_char(row, char, index, searched_char, score, checked_indices)
-#   checked_indices << index
-#   current_char = row[index]
-#   p "current_char is #{current_char} on index #{index}"
-#   return p "all good for #{char}" if current_char == searched_char
+points = {
+  ')' => 3,
+  ']' => 57,
+  '}' => 1197,
+  '>' => 25_137
+}
+pairs = {
+  '(' => ')',
+  '[' => ']',
+  '{' => '}',
+  '<' => '>'
+}
 
-#   p "have to check for #{current_char} now"
-#   case current_char
-#   when "("
-#     searched_char = ")"
-#   when "["
-#     searched_char = "]"
-#   when "{"
-#     searched_char = "}"
-#   when "<"
-#     searched_char = ">"
-#   when ")"
-#     p "oops we have an error on a )"
-#     return score += 3
-#   when "]"
-#     p "oops we have an error on a ]"
-#     return score += 57
-#   when "}"
-#     p "oops we have an error on a }"
-#     return score += 1197
-#   when ">"
-#     p "oops we have an error on a >"
-#     return score += 25137
-#   end
-#   while checked_indices.length != 10
-#     next_index_to_check = (checked_indices.last + 1)
-#     check_next_char(row, current_char, next_index_to_check, searched_char,  score, checked_indices) unless next_index_to_check > row.length
-#   end
-# end
+score = 0
+input_rows.each do |row|
+  stack = []
+  row.each do |char|
+    if pairs[char]
+      stack << char
+    elsif char == pairs[stack.last]
+      stack.pop
+    else
+      score += points[char]
+      break
+    end
+  end
+end
 
-# score = 0
-# input_chars.each do |row|
-#   checked_indices = []
-#   row.each_with_index do |char, index|
-#     next if checked_indices.include?(index)
-#     p "checking #{char} on index #{index}"
-#     case char
-#     when "("
-#       searched_char = ")"
-#     when "["
-#       searched_char = "]"
-#     when "{"
-#       searched_char = "}"
-#     when "<"
-#       searched_char = ">"
-#     when ")"
-#       p "oops we have an error on a )"
-#       break score += 3
-#     when "]"
-#       p "oops we have an error on a ]"
-#       break score += 57
-#     when "}"
-#       p "oops we have an error on a }"
-#       break score += 1197
-#     when ">"
-#       p "oops we have an error on a >"
-#       break score += 25137
-#     end
-#     check_next_char(row, char, (index + 1), searched_char, score, checked_indices)
-#   end
-# end
-
-# p "final score: #{score}"
-
-p input_chars
-
-input_chars.each do |char_arr|
-  char_arr.each_cons(2) { |arr| arr.pop if}
+p score
