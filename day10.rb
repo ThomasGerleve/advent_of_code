@@ -108,10 +108,10 @@ input_arr = input.split("\n")
 input_rows = input_arr.map(&:chars)
 
 points = {
-  ')' => 3,
-  ']' => 57,
-  '}' => 1197,
-  '>' => 25_137
+  ')' => 1,
+  ']' => 2,
+  '}' => 3,
+  '>' => 4
 }
 pairs = {
   '(' => ')',
@@ -120,19 +120,29 @@ pairs = {
   '<' => '>'
 }
 
-score = 0
-input_rows.each do |row|
+total_points = []
+input_rows.map do |row|
   stack = []
+  corrupted = false
   row.each do |char|
     if pairs[char]
       stack << char
     elsif char == pairs[stack.last]
       stack.pop
     else
-      score += points[char]
-      break
+      corrupted = true
     end
   end
+  next if corrupted
+
+  completion_stack = stack.reverse.map { |char| pairs[char] }
+  row_points = 0
+  completion_stack.each do |char|
+    row_points = (row_points * 5) + points[char]
+  end
+  total_points << row_points
 end
 
-p score
+p total_points.length
+p total_points.sort.pop(total_points.length / 2)
+p total_points.sort
