@@ -93,7 +93,10 @@ def one_round(coords)
   fired_coords = []
   start_plus_one(coords)
   coords.select { |coord, value| value > 9 }.each { |coord, value| flash(coord, coords, fired_coords) }
+  $i += 1
+  p $i if fired_coords.size == coords.size
 end
 $sum_of_flashes = 0
-100.times { one_round(coords) }
+$i = 0
+500.times { one_round(coords) }
 p $sum_of_flashes
